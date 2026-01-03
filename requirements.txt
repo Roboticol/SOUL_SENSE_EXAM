@@ -1,0 +1,11 @@
+# Soul Sense EQ Test Requirements
+# This project uses only Python built-in libraries
+
+# Core dependencies (built-in):
+# - tkinter (GUI framework)
+# - sqlite3 (database)
+# - datetime (date/time handling)
+# - re (regular expressions)
+
+# No external packages required
+# Python 3.6+ recommended

@@ -11,6 +11,25 @@ The Soul Sense EQ Test is a desktop-based application built using Python's **Tki
 - 20 multiple-choice questions to evaluate emotional intelligence
 - Auto-calculates total EQ score and gives interpretation
 - Shows all stored test results in the terminal/console
+- **NEW**: Daily emotional journal with AI sentiment analysis
+- **NEW**: Emotional pattern tracking and insights
+- **NEW**: View past journal entries and emotional journey
+
+---
+
+## 📝 Journal Feature
+
+The new journal feature allows users to:
+- Write daily emotional reflections
+- Get AI-powered sentiment analysis of entries
+- Track emotional patterns over time
+- View past entries and emotional journey
+- Receive insights on stress indicators, growth mindset, and self-reflection
+
+### AI Analysis Capabilities:
+- **Sentiment Scoring**: Analyzes positive/negative emotional tone
+- **Pattern Detection**: Identifies stress indicators, relationship focus, growth mindset, and self-reflection
+- **Emotional Tracking**: Monitors emotional trends over time
 
 ---
 

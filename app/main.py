@@ -1,214 +1,5 @@
-# import tkinter as tk
-# from tkinter import messagebox
-# from datetime import datetime
-# import logging
-
-# from app.db import get_connection
-# from app.questions import load_questions
-# from app.utils import compute_age_group
-# from app.models import (
-#     ensure_scores_schema,
-#     ensure_responses_schema,
-#     ensure_question_bank_schema
-# )
-
-# # --------------------------------------------------
-# # Logging
-# # --------------------------------------------------
-# logging.basicConfig(
-#     filename="logs/soulsense.log",
-#     level=logging.INFO,
-#     format="%(asctime)s [%(levelname)s] %(message)s"
-# )
-
-# # --------------------------------------------------
-# # DB setup (run once on startup)
-# # --------------------------------------------------
-# def initialize_db():
-#     conn = get_connection()
-#     cursor = conn.cursor()
-
-#     ensure_question_bank_schema(cursor)
-#     ensure_scores_schema(cursor)
-#     ensure_responses_schema(cursor)
-
-#     conn.commit()
-#     conn.close()
-
-
-# # --------------------------------------------------
-# # Tkinter App
-# # --------------------------------------------------
-# class SoulSenseApp:
-#     def __init__(self, root):
-#         self.root = root
-#         self.root.title("Soul Sense Exam")
-#         self.root.geometry("600x400")
-
-#         self.username = ""
-#         self.age = None
-#         self.age_group = "unknown"
-
-#         self.questions = load_questions()  # [(id, text), ...]
-#         self.current_index = 0
-#         self.responses = []
-
-#         self.build_user_info_screen()
-
-#     # -------------------------
-#     # Screen 1: User Info
-#     # -------------------------
-#     def build_user_info_screen(self):
-#         self.clear_screen()
-
-#         tk.Label(self.root, text="Soul Sense Exam", font=("Arial", 18)).pack(pady=20)
-
-#         tk.Label(self.root, text="Username").pack()
-#         self.username_entry = tk.Entry(self.root)
-#         self.username_entry.pack()
-
-#         tk.Label(self.root, text="Age").pack()
-#         self.age_entry = tk.Entry(self.root)
-#         self.age_entry.pack()
-
-#         tk.Button(self.root, text="Start Exam", command=self.start_exam).pack(pady=20)
-
-#     def start_exam(self):
-#         self.username = self.username_entry.get().strip()
-#         age_raw = self.age_entry.get().strip()
-
-#         if not self.username:
-#             messagebox.showerror("Error", "Username required")
-#             return
-
-#         try:
-#             self.age = int(age_raw)
-#         except Exception:
-#             self.age = None
-
-#         self.age_group = compute_age_group(self.age)
-#         logging.info(f"User started exam: {self.username}, age_group={self.age_group}")
-
-#         self.build_question_screen()
-
-#     # -------------------------
-#     # Screen 2: Questions
-#     # -------------------------
-#     def build_question_screen(self):
-#         self.clear_screen()
-
-#         q_id, q_text = self.questions[self.current_index]
-
-#         tk.Label(
-#             self.root,
-#             text=f"Question {self.current_index + 1} of {len(self.questions)}",
-#             font=("Arial", 12)
-#         ).pack(pady=10)
-
-#         tk.Label(
-#             self.root,
-#             text=q_text,
-#             wraplength=500,
-#             font=("Arial", 14)
-#         ).pack(pady=20)
-
-#         self.answer_var = tk.IntVar(value=0)
-
-#         for i in range(1, 6):
-#             tk.Radiobutton(
-#                 self.root,
-#                 text=str(i),
-#                 variable=self.answer_var,
-#                 value=i
-#             ).pack(anchor="w", padx=200)
-
-#         tk.Button(self.root, text="Next", command=self.save_and_next).pack(pady=20)
-
-#     def save_and_next(self):
-#         value = self.answer_var.get()
-
-#         if value == 0:
-#             messagebox.showerror("Error", "Please select an answer")
-#             return
-
-#         q_id, _ = self.questions[self.current_index]
-
-#         self.responses.append({
-#             "question_id": q_id,
-#             "value": value
-#         })
-
-#         self.current_index += 1
-
-#         if self.current_index >= len(self.questions):
-#             self.finish_exam()
-#         else:
-#             self.build_question_screen()
-
-#     # -------------------------
-#     # Finish + Save to DB
-#     # -------------------------
-#     def finish_exam(self):
-#         conn = get_connection()
-#         cursor = conn.cursor()
-
-#         timestamp = datetime.utcnow().isoformat()
-
-#         for r in self.responses:
-#             cursor.execute(
-#                 """
-#                 INSERT INTO responses
-#                 (username, question_id, response_value, age_group, timestamp)
-#                 VALUES (?, ?, ?, ?, ?)
-#                 """,
-#                 (
-#                     self.username,
-#                     r["question_id"],
-#                     r["value"],
-#                     self.age_group,
-#                     timestamp
-#                 )
-#             )
-
-#         conn.commit()
-#         conn.close()
-
-#         logging.info(f"Exam completed for {self.username}")
-
-#         self.clear_screen()
-#         tk.Label(
-#             self.root,
-#             text="Thank you for completing the exam!",
-#             font=("Arial", 16)
-#         ).pack(pady=50)
-
-#         tk.Button(self.root, text="Exit", command=self.root.quit).pack()
-
-#     # -------------------------
-#     # Utility
-#     # -------------------------
-#     def clear_screen(self):
-#         for widget in self.root.winfo_children():
-#             widget.destroy()
-
-
-# # --------------------------------------------------
-# # Entry point
-# # --------------------------------------------------
-# if __name__ == "__main__":
-#     initialize_db()
-
-#     root = tk.Tk()
-#     app = SoulSenseApp(root)
-#     root.mainloop()
-
-
-
-
-
-
 import tkinter as tk
-from tkinter import messagebox ,ttk  #imported the ttk
+from tkinter import messagebox
 import logging
 import sys
 from datetime import datetime
@@ -250,41 +41,19 @@ ensure_question_bank_schema(cursor)
 
 conn.commit()
 
-# ---------------- LOAD QUESTIONS FROM DB ----------------
-try:
-    rows = load_questions()  # [(id, text)]
-    questions = [q[1] for q in rows]   # preserve text only
-    
-    '''
-    reading only 10 for testing
-    '''
-    
-    questions = questions[:10]
-    
-    if not questions:
-        
-        raise RuntimeError("Question bank empty")
-
-    logging.info("Loaded %s questions from DB", len(questions))
-
-except Exception:
-    logging.critical("Failed to load questions from DB", exc_info=True)
-    messagebox.showerror("Fatal Error", "Question bank could not be loaded.")
-    sys.exit(1)
-
 # ---------------- GUI ----------------
 class SoulSenseApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Soul Sense EQ Test")
-        self.root.geometry("500x350")   # Same GUI window dimensions
+        self.root.geometry("500x350")
 
         self.username = ""
         self.age = None
         self.age_group = None
 
+        self.questions = []
         self.current_question = 0
-        self.total_questions = len(questions) #length of the questions
         self.responses = []
 
         self.create_username_screen()
@@ -340,42 +109,45 @@ class SoulSenseApp:
         self.age = age
         self.age_group = compute_age_group(age)
 
+        # -------- LOAD AGE-APPROPRIATE QUESTIONS --------
+        try:
+            print(self.age)
+            rows = load_questions(age=self.age)  # [(id, text)]
+            self.questions = [q[1] for q in rows]
+
+            # temporary limit (existing behavior)
+            self.questions = self.questions[:10]
+
+            if not self.questions:
+                raise RuntimeError("No questions loaded")
+
+        except Exception:
+            logging.error("Failed to load age-appropriate questions", exc_info=True)
+            messagebox.showerror(
+                "Error",
+                "No questions available for your age group."
+            )
+            return
+
         logging.info(
-            "Session started | user=%s | age=%s | age_group=%s",
-            self.username, self.age, self.age_group
+            "Session started | user=%s | age=%s | age_group=%s | questions=%s",
+            self.username,
+            self.age,
+            self.age_group,
+            len(self.questions)
         )
 
         self.show_question()
 
     def show_question(self):
         self.clear_screen()
-        # -------- Progress Bar --------
-        progress_frame = tk.Frame(self.root)
-        progress_frame.pack(pady=5)
 
-        self.progress = ttk.Progressbar(
-            progress_frame,
-            orient="horizontal",
-            length=300,
-            mode="determinate",
-            maximum=self.total_questions,
-            value=self.current_question
-        )
-        self.progress.pack()
-
-        self.progress_label = tk.Label(
-            progress_frame,
-            text=f"{self.current_question}/{self.total_questions} Completed",
-            font=("Arial", 10)
-        )
-        self.progress_label.pack()
-
-
-        if self.current_question >= len(questions):
+        if self.current_question >= len(self.questions):
             self.finish_test()
             return
 
-        q = questions[self.current_question]
+        q = self.questions[self.current_question]
+
         tk.Label(
             self.root,
             text=f"Q{self.current_question + 1}: {q}",

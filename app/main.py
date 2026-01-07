@@ -6,7 +6,7 @@ from datetime import datetime
 import json
 import os
 import random
-
+from bias_checker import SimpleBiasChecker
 from app.db import get_connection
 
 from app.questions import load_questions
@@ -384,6 +384,24 @@ class SoulSenseApp:
         )
         exit_btn.pack(pady=5)
 
+    def run_bias_check(self):
+        """Quick bias check after test completion"""
+        try:
+            checker = SimpleBiasChecker()
+            bias_result = checker.check_age_bias()
+            
+            if bias_result.get('status') == 'potential_bias':
+                # Log bias warning
+                logging.warning(f"Potential age bias detected: {bias_result}")
+                
+                # Optional: Show warning to user
+                # messagebox.showwarning("Bias Alert", 
+                #     f"Note: Test scores show differences across age groups.\n"
+                #     f"Issues: {', '.join(bias_result.get('issues', []))}")
+        
+        except Exception as e:
+            logging.error(f"Bias check failed: {e}")
+            
     def show_settings(self):
         """Show settings configuration window"""
         settings_win = tk.Toplevel(self.root)
@@ -802,6 +820,9 @@ class SoulSenseApp:
         except Exception:
             logging.error("Failed to store final score", exc_info=True)
 
+        # Run bias check
+        self.run_bias_check()
+        
         self.show_visual_results()
 
     # ---------- BENCHMARKING FUNCTIONS ----------

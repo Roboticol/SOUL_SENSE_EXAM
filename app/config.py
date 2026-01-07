@@ -43,6 +43,17 @@ def load_config():
         import copy
         return copy.deepcopy(DEFAULT_CONFIG)
 
+def save_config(new_config):
+    """Save configuration to config.json."""
+    try:
+        with open(CONFIG_PATH, "w") as f:
+            json.dump(new_config, f, indent=4)
+        logging.info("Configuration saved successfully.")
+        return True
+    except Exception as e:
+        logging.error(f"Failed to save config: {e}")
+        return False
+
 # Load Config on Import
 _config = load_config()
 
